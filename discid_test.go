@@ -21,7 +21,7 @@ import (
 	"strings"
 	"testing"
 
-	"musicbrainz.org/discid"
+	"github.com/phw/go-discid"
 )
 
 func TestDefaultDevice(t *testing.T) {
