@@ -45,8 +45,29 @@ func ExampleVersion() {
 	fmt.Printf("Version: %v\n", discid.Version())
 }
 
+func TestHasFeature(t *testing.T) {
+	result := discid.HasFeature(discid.FeatureRead)
+	if !result {
+		t.Errorf("HasFeature() = %v; expected true", result)
+	}
+}
+
+func ExampleHasFeature() {
+	if discid.HasFeature(discid.FeatureIsrc) {
+		fmt.Println("ISRC support available")
+	}
+}
+
 func ExampleRead() {
 	disc := discid.Read("") // Read from default device
 	defer disc.Close()
 	fmt.Printf("Disc ID: %v\n", disc.Id())
+}
+
+func ExampleReadFeatures() {
+	// Read TOC and MCN from the disc in /dev/cdrom
+	disc := discid.ReadFeatures("/dev/cdrom", discid.FeatureRead|discid.FeatureMcn)
+	defer disc.Close()
+	fmt.Printf("Disc ID: %v\n", disc.Id())
+	fmt.Printf("MCN    : %v\n", disc.Mcn())
 }

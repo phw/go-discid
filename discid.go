@@ -35,11 +35,21 @@ package discid
 import "C"
 import "unsafe"
 
+// Platform dependent feature
+//
+// The platform dependent features are currently discid.FeatureRead,
+// discid.FeatureMcn and discid.FeatureIsrc.
+//
+// See the libdiscid feature matrix (https://musicbrainz.org/doc/libdiscid#Feature_Matrix)
+// for a list of supported features per platform.
 type Feature uint
 
 const (
+	// Read TOC from disc
 	FeatureRead = C.DISCID_FEATURE_READ
-	FeatureMcn  = C.DISCID_FEATURE_MCN
+	// Read MCN from disc
+	FeatureMcn = C.DISCID_FEATURE_MCN
+	// Read ISRCs from disc
 	FeatureIsrc = C.DISCID_FEATURE_ISRC
 )
 
@@ -71,6 +81,17 @@ func Version() string {
 	return C.GoString(version)
 }
 
+// Check if a certain feature is implemented on the current platform.
+//
+// This only works for single features, not bit masks with multiple features.
+//
+// See the libdiscid feature matrix (https://musicbrainz.org/doc/libdiscid#Feature_Matrix)
+// for a list of supported features per platform.
+func HasFeature(feature Feature) bool {
+	result := C.discid_has_feature(uint32(feature))
+	return result == 1
+}
+
 // Read the disc in the given CD-ROM/DVD-ROM drive extracting only the TOC.
 //
 // This function reads the disc in the drive specified by the given device
@@ -83,6 +104,20 @@ func Read(device string) Disc {
 	return ReadFeatures(device, FeatureRead)
 }
 
+// Read the disc in the given CD-ROM/DVD-ROM drive with additional features.
+//
+// This function is similar to disc.Read but allows to read information about
+// MCN and per-track ISRCs in addition to the normal TOC data.
+//
+// The parameter features accepts a bitwise combination of values.
+// discid.FeatureRead is always implied, so it is not necessary to specify it.
+//
+// Reading MCN and ISRCs is not available on all platforms. You can use the
+// has_feature function to check if a specific feature is available. Passing
+// unsupported features here will just be ignored.
+//
+// Note that reading MCN and ISRC data is significantly slower than just
+// reading the TOC, so only request the features you actually need.
 func ReadFeatures(device string, features Feature) Disc {
 	handle := C.discid_new()
 	var c_device *C.char = nil
