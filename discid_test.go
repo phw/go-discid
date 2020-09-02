@@ -17,6 +17,7 @@ package discid_test
 
 import (
 	"fmt"
+	"log"
 	"strings"
 	"testing"
 
@@ -59,14 +60,20 @@ func ExampleHasFeature() {
 }
 
 func ExampleRead() {
-	disc := discid.Read("") // Read from default device
+	disc, err := discid.Read("") // Read from default device
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer disc.Close()
 	fmt.Printf("Disc ID: %v\n", disc.Id())
 }
 
 func ExampleReadFeatures() {
 	// Read TOC and MCN from the disc in /dev/cdrom
-	disc := discid.ReadFeatures("/dev/cdrom", discid.FeatureRead|discid.FeatureMcn)
+	disc, err := discid.ReadFeatures("/dev/cdrom", discid.FeatureRead|discid.FeatureMcn)
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer disc.Close()
 	fmt.Printf("Disc ID: %v\n", disc.Id())
 	fmt.Printf("MCN    : %v\n", disc.Mcn())

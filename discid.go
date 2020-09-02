@@ -100,7 +100,7 @@ func HasFeature(feature Feature) bool {
 //
 // This function will only read the TOC, hence only the disc ID itself will be
 // available. Use discid::ReadFeatures if you want to read also MCN and ISRCs.
-func Read(device string) Disc {
+func Read(device string) (disc Disc, err error) {
 	return ReadFeatures(device, FeatureRead)
 }
 
@@ -118,20 +118,33 @@ func Read(device string) Disc {
 //
 // Note that reading MCN and ISRC data is significantly slower than just
 // reading the TOC, so only request the features you actually need.
-func ReadFeatures(device string, features Feature) Disc {
+func ReadFeatures(device string, features Feature) (disc Disc, err error) {
 	handle := C.discid_new()
 	var c_device *C.char = nil
 	if device != "" {
 		c_device = C.CString(device)
+		defer C.free(unsafe.Pointer(c_device))
 	}
-	C.discid_read_sparse(handle, c_device, C.uint(features))
-	C.free(unsafe.Pointer(c_device))
-	return Disc{handle}
+	var status = C.discid_read_sparse(handle, c_device, C.uint(features))
+	disc = Disc{handle}
+	if status == 0 {
+		err = disc
+	}
+	return
 }
 
 // Release the memory allocated for the Disc object.
 func (disc Disc) Close() {
 	C.discid_free(disc.handle)
+}
+
+// Return a human-readable error message.
+//
+// This function may only be used if disc.Read failed. The returned error
+// message is only valid as long as the Disc object exists.
+func (disc Disc) Error() string {
+	err := C.discid_get_error_msg(disc.handle)
+	return C.GoString(err)
 }
 
 // Returns the MusicBrainz disc ID.
