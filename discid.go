@@ -178,7 +178,48 @@ func (disc Disc) Id() string {
 	return C.GoString(id)
 }
 
-// Return the Media Catalogue Number (MCN) for the disc.
+// Returns the FreeDB disc ID.
+func (disc Disc) FreedbId() string {
+	id := C.discid_get_freedb_id(disc.handle)
+	return C.GoString(id)
+}
+
+// Return a string representing CD Table Of Contents (TOC).
+//
+// The TOC string is a list of integers separated by a single space character. The integers
+// represent (in order):
+//
+// - First track number (normally one)
+// - Last track number
+// - Lead-out track offset
+// - Up to 99 frame offsets
+func (disc Disc) TocString() string {
+	toc := C.discid_get_toc_string(disc.handle)
+	return C.GoString(toc)
+}
+
+// An URL for submitting the DiscID to MusicBrainz.
+func (disc Disc) SubmissionUrl() string {
+	url := C.discid_get_submission_url(disc.handle)
+	return C.GoString(url)
+}
+
+// The number of the first track on this disc.
+func (disc Disc) FirstTrackNum() int {
+	return int(C.discid_get_first_track_num(disc.handle))
+}
+
+// The number of the last track on this disc.
+func (disc Disc) LastTrackNum() int {
+	return int(C.discid_get_last_track_num(disc.handle))
+}
+
+// The length of the disc in sectors.
+func (disc Disc) Sectors() int {
+	return int(C.discid_get_sectors(disc.handle))
+}
+
+// Return the Media Catalogue Number (MCN) for the disc, if present.
 //
 // This is essentially an EAN (= UPC with 0 prefix).
 func (disc Disc) Mcn() string {
