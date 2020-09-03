@@ -55,6 +55,8 @@ const (
 	FeatureMcn = C.DISCID_FEATURE_MCN
 	// Read ISRCs from disc
 	FeatureIsrc = C.DISCID_FEATURE_ISRC
+	// Read with all features
+	FeatureAll = FeatureRead | FeatureMcn | FeatureIsrc
 )
 
 // Holds information about a read disc (TOC, MCN, ISRCs).
