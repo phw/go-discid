@@ -171,8 +171,8 @@ func Put(first int, offsets []int) (disc Disc, err error) {
 }
 
 // Release the memory allocated for the Disc object.
-func (disc Disc) Close() {
-	C.discid_free(disc.handle)
+func (d Disc) Close() {
+	C.discid_free(d.handle)
 }
 
 // Return a human-readable error message.
@@ -184,14 +184,14 @@ func (d Disc) ErrorMessage() string {
 }
 
 // Returns the MusicBrainz disc ID.
-func (disc Disc) Id() string {
-	id := C.discid_get_id(disc.handle)
+func (d Disc) Id() string {
+	id := C.discid_get_id(d.handle)
 	return C.GoString(id)
 }
 
 // Returns the FreeDB disc ID.
-func (disc Disc) FreedbId() string {
-	id := C.discid_get_freedb_id(disc.handle)
+func (d Disc) FreedbId() string {
+	id := C.discid_get_freedb_id(d.handle)
 	return C.GoString(id)
 }
 
@@ -210,36 +210,36 @@ func (disc Disc) FreedbId() string {
 // - Lead-out track offset
 //
 // - Up to 99 frame offsets
-func (disc Disc) TocString() string {
-	toc := C.discid_get_toc_string(disc.handle)
+func (d Disc) TocString() string {
+	toc := C.discid_get_toc_string(d.handle)
 	return C.GoString(toc)
 }
 
 // An URL for submitting the DiscID to MusicBrainz.
-func (disc Disc) SubmissionUrl() string {
-	url := C.discid_get_submission_url(disc.handle)
+func (d Disc) SubmissionUrl() string {
+	url := C.discid_get_submission_url(d.handle)
 	return C.GoString(url)
 }
 
 // The number of the first track on this disc.
-func (disc Disc) FirstTrackNum() int {
-	return int(C.discid_get_first_track_num(disc.handle))
+func (d Disc) FirstTrackNum() int {
+	return int(C.discid_get_first_track_num(d.handle))
 }
 
 // The number of the last track on this disc.
-func (disc Disc) LastTrackNum() int {
-	return int(C.discid_get_last_track_num(disc.handle))
+func (d Disc) LastTrackNum() int {
+	return int(C.discid_get_last_track_num(d.handle))
 }
 
 // The length of the disc in sectors.
-func (disc Disc) Sectors() int {
-	return int(C.discid_get_sectors(disc.handle))
+func (d Disc) Sectors() int {
+	return int(C.discid_get_sectors(d.handle))
 }
 
 // Return the Media Catalogue Number (MCN) for the disc, if present.
 //
 // This is essentially an EAN (= UPC with 0 prefix).
-func (disc Disc) Mcn() string {
-	mcn := C.discid_get_mcn(disc.handle)
+func (d Disc) Mcn() string {
+	mcn := C.discid_get_mcn(d.handle)
 	return C.GoString(mcn)
 }
