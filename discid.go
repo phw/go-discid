@@ -148,8 +148,9 @@ func Put(first int, offsets []int) (disc Disc, err error) {
 	disc = Disc{handle}
 	// libdiscid always expects an array of 100 integers, no matter the track count.
 	var c_offsets [100]C.int
-	for i := 0; i < len(offsets); i++ {
-		c_offsets[i] = C.int(offsets[i])
+	c_offsets[0] = C.int(offsets[0])
+	for i := 1; i < len(offsets) && i-1+first < 100; i++ {
+		c_offsets[i-1+first] = C.int(offsets[i])
 	}
 	var status = C.discid_put(handle, C.int(first), C.int(last), &c_offsets[0])
 	if status == 0 {

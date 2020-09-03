@@ -22,6 +22,7 @@ import (
 	"testing"
 
 	"github.com/phw/go-discid"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestDefaultDevice(t *testing.T) {
@@ -59,6 +60,13 @@ func ExampleHasFeature() {
 	}
 }
 
+func TestReadInvalidDevice(t *testing.T) {
+	_, err := discid.Read("notadevice")
+	if err == nil {
+		t.Errorf("Expected error for accessing invalid device")
+	}
+}
+
 func ExampleRead() {
 	disc, err := discid.Read("") // Read from default device
 	if err != nil {
@@ -77,6 +85,63 @@ func ExampleReadFeatures() {
 	defer disc.Close()
 	fmt.Printf("Disc ID: %v\n", disc.Id())
 	fmt.Printf("MCN    : %v\n", disc.Mcn())
+}
+
+func TestPut(t *testing.T) {
+	assert := assert.New(t)
+	first := 1
+	offsets := []int{
+		206535, 150, 18901, 39738, 59557, 79152, 100126, 124833, 147278, 166336, 182560,
+	}
+	disc, err := discid.Put(first, offsets)
+	assert.Empty(err)
+	assert.Equal("Wn8eRBtfLDfM0qjYPdxrz.Zjs_U-", disc.Id())
+	assert.Equal("830abf0a", disc.FreedbId())
+	assert.Equal(1, disc.FirstTrackNum())
+	assert.Equal(10, disc.LastTrackNum())
+	assert.Equal(206535, disc.Sectors())
+	assert.Equal(
+		"1 10 206535 150 18901 39738 59557 79152 100126 124833 147278 166336 182560",
+		disc.TocString())
+	assert.Equal(
+		"http://musicbrainz.org/cdtoc/attach?id=Wn8eRBtfLDfM0qjYPdxrz.Zjs_U-&tracks=10&toc=1+10+206535+150+18901+39738+59557+79152+100126+124833+147278+166336+182560",
+		disc.SubmissionUrl())
+}
+
+func TestPutFirstTrackLargerOne(t *testing.T) {
+	assert := assert.New(t)
+	first := 3
+	offsets := []int{
+		206535, 150, 18901, 39738, 59557, 79152, 100126, 124833, 147278, 166336, 182560,
+	}
+	disc, err := discid.Put(first, offsets[0:])
+	assert.Empty(err)
+	assert.Equal("ByBKvJM1hBL7XtvsPyYtIjlX0Bw-", disc.Id())
+	assert.Equal(3, disc.FirstTrackNum())
+	assert.Equal(12, disc.LastTrackNum())
+	assert.Equal(206535, disc.Sectors())
+}
+
+func TestPutTooManyOffsets(t *testing.T) {
+	first := 1
+	offsets := [101]int{}
+	_, err := discid.Put(first, offsets[0:])
+	assert.NotEmpty(t, err)
+	if err.Error() != "Illegal track limits" {
+		t.Errorf("Expected error \"Illegal track limits\"")
+	}
+}
+
+func TestPutTooManyTracks(t *testing.T) {
+	// First track number is 82, 19 tracks
+	// => last track number would be 100, but 99 is max.
+	first := 82
+	offsets := [20]int{}
+	_, err := discid.Put(first, offsets[0:])
+	assert.NotEmpty(t, err)
+	if err.Error() != "Illegal track limits" {
+		t.Errorf("Expected error \"Illegal track limits\"")
+	}
 }
 
 func ExamplePut() {
