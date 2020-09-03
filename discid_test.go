@@ -125,7 +125,8 @@ func TestPutFirstTrackLargerOne(t *testing.T) {
 func TestPutTooManyOffsets(t *testing.T) {
 	first := 1
 	offsets := [101]int{}
-	_, err := discid.Put(first, offsets[0:])
+	disc, err := discid.Put(first, offsets[0:])
+	assert.Empty(t, disc)
 	assert.NotEmpty(t, err)
 	if err.Error() != "Illegal track limits" {
 		t.Errorf("Expected error \"Illegal track limits\"")
@@ -137,7 +138,8 @@ func TestPutTooManyTracks(t *testing.T) {
 	// => last track number would be 100, but 99 is max.
 	first := 82
 	offsets := [20]int{}
-	_, err := discid.Put(first, offsets[0:])
+	disc, err := discid.Put(first, offsets[0:])
+	assert.Empty(t, disc)
 	assert.NotEmpty(t, err)
 	if err.Error() != "Illegal track limits" {
 		t.Errorf("Expected error \"Illegal track limits\"")

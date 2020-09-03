@@ -33,7 +33,10 @@ package discid
 // #include <stdlib.h>
 // #include "discid/discid.h"
 import "C"
-import "unsafe"
+import (
+	"errors"
+	"unsafe"
+)
 
 // Platform dependent feature
 //
@@ -119,16 +122,18 @@ func Read(device string) (disc Disc, err error) {
 // Note that reading MCN and ISRC data is significantly slower than just
 // reading the TOC, so only request the features you actually need.
 func ReadFeatures(device string, features Feature) (disc Disc, err error) {
-	handle := C.discid_new()
-	disc = Disc{handle}
+	d := Disc{C.discid_new()}
 	var c_device *C.char = nil
 	if device != "" {
 		c_device = C.CString(device)
 		defer C.free(unsafe.Pointer(c_device))
 	}
-	var status = C.discid_read_sparse(handle, c_device, C.uint(features))
+	var status = C.discid_read_sparse(d.handle, c_device, C.uint(features))
 	if status == 0 {
-		err = disc
+		defer d.Close()
+		err = errors.New(d.ErrorMessage())
+	} else {
+		disc = d
 	}
 	return
 }
@@ -144,8 +149,7 @@ func ReadFeatures(device string, features Feature) (disc Disc, err error) {
 // sectors on the disc. offsets must not be longer than 100 elements (leadout + 99 tracks).
 func Put(first int, offsets []int) (disc Disc, err error) {
 	last := first + len(offsets) - 2
-	handle := C.discid_new()
-	disc = Disc{handle}
+	d := Disc{C.discid_new()}
 	// libdiscid always expects an array of 100 integers, no matter the track count.
 	var c_offsets [100]C.int
 	c_offsets[0] = C.int(offsets[0])
@@ -156,9 +160,12 @@ func Put(first int, offsets []int) (disc Disc, err error) {
 		}
 		c_offsets[track] = C.int(n)
 	}
-	var status = C.discid_put(handle, C.int(first), C.int(last), &c_offsets[0])
+	var status = C.discid_put(d.handle, C.int(first), C.int(last), &c_offsets[0])
 	if status == 0 {
-		err = disc
+		defer d.Close()
+		err = errors.New(d.ErrorMessage())
+	} else {
+		disc = d
 	}
 	return
 }
@@ -170,10 +177,9 @@ func (disc Disc) Close() {
 
 // Return a human-readable error message.
 //
-// This function may only be used if disc.Read failed. The returned error
-// message is only valid as long as the Disc object exists.
-func (disc Disc) Error() string {
-	err := C.discid_get_error_msg(disc.handle)
+// This function may only be used if discid.Read failed.
+func (d Disc) ErrorMessage() string {
+	err := C.discid_get_error_msg(d.handle)
 	return C.GoString(err)
 }
 
