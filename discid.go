@@ -139,7 +139,7 @@ func ReadFeatures(device string, features Feature) (disc Disc, err error) {
 // the disc ID afterwards, without accessing the disc drive.
 //
 // first is the track number of the first track (1-99).
-// The offsets parameter points to an array which contains the track offsets for each track.
+// The offsets parameter is an array which contains the track offsets for each track.
 // The first element, offsets[0], is the leadout track. It must contain the total number of
 // sectors on the disc. offsets must not be longer than 100 elements (leadout + 99 tracks).
 func Put(first int, offsets []int) (disc Disc, err error) {
@@ -149,8 +149,12 @@ func Put(first int, offsets []int) (disc Disc, err error) {
 	// libdiscid always expects an array of 100 integers, no matter the track count.
 	var c_offsets [100]C.int
 	c_offsets[0] = C.int(offsets[0])
-	for i := 1; i < len(offsets) && i-1+first < 100; i++ {
-		c_offsets[i-1+first] = C.int(offsets[i])
+	for i, n := range offsets[1:] {
+		track := i + first
+		if track > 99 {
+			break
+		}
+		c_offsets[track] = C.int(n)
 	}
 	var status = C.discid_put(handle, C.int(first), C.int(last), &c_offsets[0])
 	if status == 0 {
