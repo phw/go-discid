@@ -183,6 +183,11 @@ func (d Disc) ErrorMessage() string {
 	return C.GoString(err)
 }
 
+// String representation of the disc, same as Id()
+func (d Disc) String() string {
+	return d.Id()
+}
+
 // Returns the MusicBrainz disc ID.
 func (d Disc) Id() string {
 	id := C.discid_get_id(d.handle)

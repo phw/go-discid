@@ -96,6 +96,7 @@ func TestPut(t *testing.T) {
 	disc, err := discid.Put(first, offsets)
 	assert.Empty(err)
 	assert.Equal("Wn8eRBtfLDfM0qjYPdxrz.Zjs_U-", disc.Id())
+	assert.Equal(disc.Id(), fmt.Sprint(disc))
 	assert.Equal("830abf0a", disc.FreedbId())
 	assert.Equal(1, disc.FirstTrackNum())
 	assert.Equal(10, disc.LastTrackNum())
