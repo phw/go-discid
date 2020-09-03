@@ -107,6 +107,19 @@ func TestPut(t *testing.T) {
 	assert.Equal(
 		"http://musicbrainz.org/cdtoc/attach?id=Wn8eRBtfLDfM0qjYPdxrz.Zjs_U-&tracks=10&toc=1+10+206535+150+18901+39738+59557+79152+100126+124833+147278+166336+182560",
 		disc.SubmissionUrl())
+	for i := disc.FirstTrackNum(); i <= disc.LastTrackNum(); i++ {
+		track := disc.Track(i)
+		offset := offsets[track.Number]
+		next := 0
+		if track.Number < disc.LastTrackNum() {
+			next = track.Number + 1
+		}
+		length := offsets[next] - offset
+		assert.Equal(i, track.Number)
+		assert.Equal(offset, track.Offset)
+		assert.Equal(length, track.Sectors)
+		assert.Equal("", track.Isrc)
+	}
 }
 
 func TestPutFirstTrackLargerOne(t *testing.T) {
@@ -159,4 +172,18 @@ func ExamplePut() {
 	defer disc.Close()
 	fmt.Println(disc.Id())
 	// Output: lSOVc5h6IXSuzcamJS1Gp4_tRuA-
+}
+
+func TestTrackOutOfRange(t *testing.T) {
+	assert := assert.New(t)
+	first := 1
+	offsets := []int{
+		206535, 150, 18901, 39738, 59557, 79152, 100126, 124833, 147278, 166336, 182560,
+	}
+	disc, err := discid.Put(first, offsets)
+	assert.Empty(err)
+	assert.Panics(func() { disc.Track(disc.FirstTrackNum() - 1) })
+	assert.NotPanics(func() { disc.Track(disc.FirstTrackNum()) })
+	assert.NotPanics(func() { disc.Track(disc.LastTrackNum()) })
+	assert.Panics(func() { disc.Track(disc.LastTrackNum() + 1) })
 }

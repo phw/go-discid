@@ -35,6 +35,7 @@ package discid
 import "C"
 import (
 	"errors"
+	"fmt"
 	"unsafe"
 )
 
@@ -66,6 +67,20 @@ const (
 //   defer disc.Close()
 type Disc struct {
 	handle *C.DiscId
+}
+
+// Holds information about a single track
+type Track struct {
+	// Track number (1-99) of the track
+	Number int
+	// Start offset in sectors
+	Offset int
+	// Track length in sectors
+	Sectors int
+	// ISRC for this track (might be empty).
+	//
+	// This will only bet set if discid.ReadFeatures` is called with discid.FeatureIsrc.
+	Isrc string
 }
 
 // Return the name of the default disc drive for this operating system.
@@ -247,4 +262,25 @@ func (d Disc) Sectors() int {
 func (d Disc) Mcn() string {
 	mcn := C.discid_get_mcn(d.handle)
 	return C.GoString(mcn)
+}
+
+// Return the Media Catalogue Number (MCN) for the disc, if present.
+//
+// This is essentially an EAN (= UPC with 0 prefix).
+func (d Disc) Track(number int) Track {
+	first := d.FirstTrackNum()
+	last := d.LastTrackNum()
+	if number < first || number > last {
+		err := fmt.Sprintf(
+			"track number out of bounds: given %v, expected between %v and %v",
+			number, first, last)
+		panic(err)
+	}
+	n := C.int(number)
+	return Track{
+		number,
+		int(C.discid_get_track_offset(d.handle, n)),
+		int(C.discid_get_track_length(d.handle, n)),
+		C.GoString(C.discid_get_track_isrc(d.handle, n)),
+	}
 }
