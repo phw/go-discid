@@ -78,3 +78,17 @@ func ExampleReadFeatures() {
 	fmt.Printf("Disc ID: %v\n", disc.Id())
 	fmt.Printf("MCN    : %v\n", disc.Mcn())
 }
+
+func ExamplePut() {
+	first := 1
+	offsets := []int{
+		242457, 150, 44942, 61305, 72755, 96360, 130485, 147315, 164275, 190702, 205412, 220437,
+	}
+	disc, err := discid.Put(first, offsets)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer disc.Close()
+	fmt.Println(disc.Id())
+	// Output: lSOVc5h6IXSuzcamJS1Gp4_tRuA-
+}

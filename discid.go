@@ -120,13 +120,38 @@ func Read(device string) (disc Disc, err error) {
 // reading the TOC, so only request the features you actually need.
 func ReadFeatures(device string, features Feature) (disc Disc, err error) {
 	handle := C.discid_new()
+	disc = Disc{handle}
 	var c_device *C.char = nil
 	if device != "" {
 		c_device = C.CString(device)
 		defer C.free(unsafe.Pointer(c_device))
 	}
 	var status = C.discid_read_sparse(handle, c_device, C.uint(features))
+	if status == 0 {
+		err = disc
+	}
+	return
+}
+
+// Provides the TOC of a known CD.
+//
+// This function may be used if the TOC has been read earlier and you want to calculate
+// the disc ID afterwards, without accessing the disc drive.
+//
+// first is the track number of the first track (1-99).
+// The offsets parameter points to an array which contains the track offsets for each track.
+// The first element, offsets[0], is the leadout track. It must contain the total number of
+// sectors on the disc. offsets must not be longer than 100 elements (leadout + 99 tracks).
+func Put(first int, offsets []int) (disc Disc, err error) {
+	last := first + len(offsets) - 2
+	handle := C.discid_new()
 	disc = Disc{handle}
+	// libdiscid always expects an array of 100 integers, no matter the track count.
+	var c_offsets [100]C.int
+	for i := 0; i < len(offsets); i++ {
+		c_offsets[i] = C.int(offsets[i])
+	}
+	var status = C.discid_put(handle, C.int(first), C.int(last), &c_offsets[0])
 	if status == 0 {
 		err = disc
 	}
