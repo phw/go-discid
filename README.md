@@ -36,9 +36,7 @@ func main() {
 }
 ```
 
-See the [API documentation](https://godoc.org/github.com/phw/go-discid) for details.
-Additional examples are available in the
-[examples/](https://github.com/phw/go-discid/tree/master/examples) directory.
+See the [API documentation](https://pkg.go.dev/github.com/phw/go-discid) for details.
 
 ## Contribute
 The source code for discid is available on

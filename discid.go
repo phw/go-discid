@@ -187,12 +187,18 @@ func (disc Disc) FreedbId() string {
 
 // Return a string representing CD Table Of Contents (TOC).
 //
-// The TOC string is a list of integers separated by a single space character. The integers
-// represent (in order):
+// The TOC string is a list of integers separated by a single space character.
+//
+// Example: 1 11 242457 150 44942 61305 72755 96360 130485 147315 164275 190702 205412 220437
+//
+// The integers represent (in order):
 //
 // - First track number (normally one)
+//
 // - Last track number
+//
 // - Lead-out track offset
+//
 // - Up to 99 frame offsets
 func (disc Disc) TocString() string {
 	toc := C.discid_get_toc_string(disc.handle)
