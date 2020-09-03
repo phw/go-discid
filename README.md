@@ -1,6 +1,6 @@
 # Go bindings for MusicBrainz libdiscid
-![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/phw/go-discid?label=package%20version)
-[![GoDoc](https://godoc.org/github.com/phw/go-discid?status.svg)](https://godoc.org/github.com/phw/go-discid)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/phw/go-discid?label=package%20version)](https://github.com/phw/go-discid/releases)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/phw/go-discid)](https://pkg.go.dev/github.com/phw/go-discid)
 [![GitHub license](https://img.shields.io/github/license/phw/go-discid)](https://github.com/phw/go-discid/blob/master/LICENSE)
 
 ## About
