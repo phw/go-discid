@@ -36,6 +36,8 @@ import "C"
 import (
 	"errors"
 	"fmt"
+	"strconv"
+	"strings"
 	"unsafe"
 )
 
@@ -185,6 +187,55 @@ func Put(first int, offsets []int) (disc Disc, err error) {
 		disc = d
 	}
 	return
+}
+
+// Parses a TOC string and returns a Disc instance for it.
+//
+// The TOC string provided here must have the same format as returned by Disc.TocString.
+//
+// This function can be used if you already have a TOC string like e.g.
+// "1 11 242457 150 44942 61305 72755 96360 130485 147315 164275 190702 205412 220437".
+func Parse(toc string) (disc Disc, err error) {
+	first := 0
+	last := 0
+	var offsets [100]int
+	var i int
+	var part string
+	for i, part = range strings.Split(toc, " ") {
+		parsedInt, e := strconv.Atoi(part)
+		if e != nil {
+			err = e
+			return
+		}
+		if i == 0 {
+			first = parsedInt
+		} else if i == 1 {
+			last = parsedInt
+		} else {
+			if i > (last+2) || i > 99+2 {
+				err = errors.New("TOC string contains too many offsets (max. 100)")
+				return
+			}
+			offsets[i-2] = parsedInt
+		}
+	}
+
+	if i < 2 || first < 1 || last < 1 || last > 99 {
+		msg := fmt.Sprintf("Invalid TOC string \"%v\"", toc)
+		err = errors.New(msg)
+		return
+	}
+
+	offsetCount := i - 2
+	trackCount := last - first + 1
+	if offsetCount < trackCount {
+		msg := fmt.Sprintf("Number of offsets %v does not match track count %v",
+			offsetCount, trackCount)
+		err = errors.New(msg)
+		return
+	}
+
+	return Put(first, offsets[0:trackCount+1])
 }
 
 // Release the memory allocated for the Disc object.

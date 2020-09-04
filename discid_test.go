@@ -18,6 +18,7 @@ package discid_test
 import (
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -172,6 +173,97 @@ func ExamplePut() {
 	defer disc.Close()
 	fmt.Println(disc.Id())
 	// Output: lSOVc5h6IXSuzcamJS1Gp4_tRuA-
+}
+
+func ExampleParse() {
+	toc := "1 11 242457 150 44942 61305 72755 96360 130485 147315 164275 190702 205412 220437"
+	disc, err := discid.Parse(toc)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer disc.Close()
+	fmt.Println(disc.Id())
+	// Output: lSOVc5h6IXSuzcamJS1Gp4_tRuA-
+}
+
+func TestParseMinimal(t *testing.T) {
+	assert := assert.New(t)
+	toc := "1 1 44942 150"
+	disc, err := discid.Parse(toc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer disc.Close()
+	assert.Equal("ANJa4DGYN_ktpzOwvVPtcjwP7mE-", disc.Id())
+	assert.Equal(toc, disc.TocString())
+}
+
+func TestParseFirstTrackNotOne(t *testing.T) {
+	assert := assert.New(t)
+	toc := "3 12 242457 150 18901 39738 59557 79152 100126 124833 147278 166336 182560"
+	disc, err := discid.Parse(toc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer disc.Close()
+	assert.Equal("fC1yNbC5bVjbvphqlAY9JyYoWEY-", disc.Id())
+	assert.Equal(toc, disc.TocString())
+}
+
+func TestParseNaN(t *testing.T) {
+	toc := "1 2 242457 150 a"
+	_, err := discid.Parse(toc)
+	if assert.Error(t, err) {
+		if err.(*strconv.NumError).Err != strconv.ErrSyntax {
+			t.Errorf("Expected strconv.ErrSyntax, got \"%v\"", err)
+		}
+	}
+}
+
+func TestParseInvalidEmpty(t *testing.T) {
+	toc := ""
+	_, err := discid.Parse(toc)
+	if assert.Error(t, err) {
+		if err.(*strconv.NumError).Err != strconv.ErrSyntax {
+			t.Errorf("Expected strconv.ErrSyntax, got \"%v\"", err)
+		}
+	}
+}
+
+func TestParseTooManyOffsets(t *testing.T) {
+	assert := assert.New(t)
+	toc := "1 2 242457 150 200 300"
+	_, err := discid.Parse(toc)
+	assert.Error(err)
+	assert.Equal("TOC string contains too many offsets (max. 100)", err.Error())
+}
+
+func TestParseTooManyOffsetsTotal(t *testing.T) {
+	assert := assert.New(t)
+	indexes := [103]string{"1", "99", "20000"}
+	for i := 3; i < len(indexes); i++ {
+		indexes[i] = strconv.Itoa(i * 100)
+	}
+	toc := strings.Join(indexes[:], " ")
+	_, err := discid.Parse(toc)
+	assert.Error(err)
+	assert.Equal("TOC string contains too many offsets (max. 100)", err.Error())
+}
+
+func TestParseInvalidMissingOffsets(t *testing.T) {
+	assert := assert.New(t)
+	toc := "1 2 242457 150"
+	_, err := discid.Parse(toc)
+	assert.Error(err)
+	assert.Equal("Number of offsets 1 does not match track count 2", err.Error())
+}
+
+func TestParseInvalidNotEnoughElements(t *testing.T) {
+	assert := assert.New(t)
+	toc := "1"
+	_, err := discid.Parse(toc)
+	assert.Error(err)
+	assert.Equal("Invalid TOC string \"1\"", err.Error())
 }
 
 func TestTrackOutOfRange(t *testing.T) {
