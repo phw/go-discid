@@ -95,7 +95,10 @@ func TestPut(t *testing.T) {
 		206535, 150, 18901, 39738, 59557, 79152, 100126, 124833, 147278, 166336, 182560,
 	}
 	disc, err := discid.Put(first, offsets)
-	assert.Empty(err)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer disc.Close()
 	assert.Equal("Wn8eRBtfLDfM0qjYPdxrz.Zjs_U-", disc.Id())
 	assert.Equal(disc.Id(), fmt.Sprint(disc))
 	assert.Equal("830abf0a", disc.FreedbId())
@@ -130,7 +133,10 @@ func TestPutFirstTrackLargerOne(t *testing.T) {
 		206535, 150, 18901, 39738, 59557, 79152, 100126, 124833, 147278, 166336, 182560,
 	}
 	disc, err := discid.Put(first, offsets[0:])
-	assert.Empty(err)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer disc.Close()
 	assert.Equal("ByBKvJM1hBL7XtvsPyYtIjlX0Bw-", disc.Id())
 	assert.Equal(3, disc.FirstTrackNum())
 	assert.Equal(12, disc.LastTrackNum())
@@ -273,7 +279,10 @@ func TestTrackOutOfRange(t *testing.T) {
 		206535, 150, 18901, 39738, 59557, 79152, 100126, 124833, 147278, 166336, 182560,
 	}
 	disc, err := discid.Put(first, offsets)
-	assert.Empty(err)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer disc.Close()
 	assert.Panics(func() { disc.Track(disc.FirstTrackNum() - 1) })
 	assert.NotPanics(func() { disc.Track(disc.FirstTrackNum()) })
 	assert.NotPanics(func() { disc.Track(disc.LastTrackNum()) })
