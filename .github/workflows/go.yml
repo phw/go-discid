@@ -21,6 +21,9 @@ jobs:
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
 
+    - name: Install libdiscid
+      run: sudo apt-get install libdiscid-dev
+
     - name: Get dependencies
       run: |
         go get -v -t -d ./...
