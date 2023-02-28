@@ -1,0 +1,19 @@
+image: archlinux
+packages:
+  - go
+  - libdiscid
+tasks:
+  - test: |
+      cd go-discid
+      go build -v .
+      go test -v .
+  # Skip publishing if this is not a tagged release
+  - only-tags: |
+      cd go-discid
+      GIT_REF=$(git describe --always)
+      [[ "$GIT_REF" =~ ^v[0-9]+\.[0-9]+(\.[0-9]+)?$ ]] || complete-build
+  - publish: |
+      # Announce new release to Go Module Index
+      cd go-discid
+      VERSION=$(git describe --exact-match)
+      curl "https://proxy.golang.org/go.uploadedlobster.com/discid/@v/${VERSION}.info"
