@@ -1,5 +1,5 @@
-module github.com/phw/go-discid/examples/discinfo
+module go.uploadedlobster.com/discid/examples/discinfo
 
 go 1.13
 
-require github.com/phw/go-discid v0.2.1
+require go.uploadedlobster.com/discid v0.2.1

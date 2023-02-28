@@ -1,3 +1,3 @@
-module github.com/phw/go-discid/examples/discinfo-cgo
+module go.uploadedlobster.com/discid/examples/discinfo-cgo
 
 go 1.13

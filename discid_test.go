@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Philipp Wolfer <ph.wolfer@gmail.com>
+// Copyright (C) 2020-2023 Philipp Wolfer <ph.wolfer@gmail.com>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/phw/go-discid"
 	"github.com/stretchr/testify/assert"
+	"go.uploadedlobster.com/discid"
 )
 
 func TestDefaultDevice(t *testing.T) {

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/phw/go-discid"
+	"go.uploadedlobster.com/discid"
 )
 
 func main() {

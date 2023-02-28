@@ -1,6 +1,6 @@
 # Go bindings for MusicBrainz libdiscid
 [![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/phw/go-discid?label=package%20version)](https://github.com/phw/go-discid/releases)
-[![PkgGoDev](https://pkg.go.dev/badge/github.com/phw/go-discid)](https://pkg.go.dev/github.com/phw/go-discid)
+[![PkgGoDev](https://pkg.go.dev/badge/go.uploadedlobster.com/discid)](https://pkg.go.dev/go.uploadedlobster.com/discid)
 [![GitHub license](https://img.shields.io/github/license/phw/go-discid)](https://github.com/phw/go-discid/blob/master/LICENSE)
 
 ## About
@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/phw/go-discid"
+	"go.uploadedlobster.com/discid"
 )
 
 func main() {
@@ -36,17 +36,17 @@ func main() {
 }
 ```
 
-See the [API documentation](https://pkg.go.dev/github.com/phw/go-discid) for details.
+See the [API documentation](https://pkg.go.dev/go.uploadedlobster.com/discid) for details.
 
 ## Contribute
 The source code for discid is available on
-[GitHub](https://github.com/phw/go-discid).
+[GitHub](https://go.uploadedlobster.com/discid).
 
 Please report any issues on the
-[issue tracker](https://github.com/phw/go-discid/issues).
+[issue tracker](https://go.uploadedlobster.com/discid/issues).
 
 ## License
-discid Copyright (c) 2020 by Philipp Wolfer <ph.wolfer@gmail.com>
+discid Copyright (c) 2020-2023 by Philipp Wolfer <ph.wolfer@gmail.com>
 
 discid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by

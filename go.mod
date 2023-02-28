@@ -1,4 +1,4 @@
-module github.com/phw/go-discid
+module go.uploadedlobster.com/discid
 
 go 1.13
 
