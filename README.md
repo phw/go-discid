@@ -1,7 +1,5 @@
 # Go bindings for MusicBrainz libdiscid
-[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/phw/go-discid?label=package%20version)](https://github.com/phw/go-discid/releases)
 [![PkgGoDev](https://pkg.go.dev/badge/go.uploadedlobster.com/discid)](https://pkg.go.dev/go.uploadedlobster.com/discid)
-[![GitHub license](https://img.shields.io/github/license/phw/go-discid)](https://github.com/phw/go-discid/blob/master/LICENSE)
 
 ## About
 discid provides Go bindings for the MusicBrainz DiscID library [libdiscid](http://musicbrainz.org/doc/libdiscid).
@@ -39,11 +37,17 @@ func main() {
 See the [API documentation](https://pkg.go.dev/go.uploadedlobster.com/discid) for details.
 
 ## Contribute
-The source code for discid is available on
-[GitHub](https://go.uploadedlobster.com/discid).
+The source code for discid-sys is available on
+[SourceHut](https://git.sr.ht/~phw/go-discid).
 
 Please report any issues on the
-[issue tracker](https://go.uploadedlobster.com/discid/issues).
+[issue tracker](https://todo.sr.ht/~phw/discid-bindings).
+
+Patches can be submitted to the [mailing list](https://lists.sr.ht/~phw/musicbrainz).
+You can clone the repository directly on SourceHut and submit your changes
+with the "Prepare patchset" button. Please see SourceHut's
+[documentation for sending patches upstream](https://man.sr.ht/git.sr.ht/#sending-patches-upstream)
+for details.
 
 ## License
 discid Copyright (c) 2020-2023 by Philipp Wolfer <ph.wolfer@gmail.com>
@@ -58,4 +62,4 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Lesser General Public License for more details.
 
-See LICENSE for details.
+See [LICENSE](./LICENSE) for details.
