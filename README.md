@@ -1,6 +1,8 @@
 # Go bindings for MusicBrainz libdiscid
 [![PkgGoDev](https://pkg.go.dev/badge/go.uploadedlobster.com/discid)](https://pkg.go.dev/go.uploadedlobster.com/discid)
 
+**This project has been moved to https://git.sr.ht/~phw/go-discid**
+
 ## About
 discid provides Go bindings for the MusicBrainz DiscID library [libdiscid](http://musicbrainz.org/doc/libdiscid).
 It allows calculating DiscIDs (MusicBrainz and freedb) for Audio CDs. Additionally
