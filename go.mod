@@ -1,4 +1,5 @@
-module go.uploadedlobster.com/discid
+// Deprecated: use go.uploadedlobster.com/discid instead.
+module github.com/phw/go-discid
 
 go 1.13
 
